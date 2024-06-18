@@ -143,8 +143,7 @@ namespace MainMenuSettings
 			Button.SetParent(Scroller, false);
 			HandleModOptions(mod.options, ModPage);
 			handler._Start();
-			if (mod.options.CreationCallback != null)
-				mod.options.CreationCallback.Invoke(ModPage);
+			mod.options.CreationCallback?.Invoke(ModPage);
 		}
 		
 		void SceneLoaded(Scene old, Scene newS) 
