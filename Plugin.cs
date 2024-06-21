@@ -3,10 +3,11 @@ using BepInEx;
 using UnityEngine;
 using UnityEngine.UI;
 using MainMenuSettings.Extensions;
+using UnityEngine.SceneManagement;
 
 namespace MainMenuSettings 
 {
-	[BepInPlugin("tairasoul.vaproxy.mainmenusettings", "MainMenuSettings", "1.0.0")]
+	[BepInPlugin("tairasoul.vaproxy.mainmenusettings", "MainMenuSettings", "1.0.1")]
 	class Plugin : BaseUnityPlugin 
 	{
 		internal static Sprite RotateSprite;
@@ -23,6 +24,13 @@ namespace MainMenuSettings
 			GameObject SettingsHandler = new("MainMenuSettings");
 			DontDestroyOnLoad(SettingsHandler);
 			SettingsHandler.AddComponent<MenuSettingsHandler>();
+			SceneManager.activeSceneChanged += (Scene old, Scene _new) => 
+			{
+				if (_new.name != "Menu")
+					Ready = false;
+				else
+					Setup();
+			};
 		}
 		
 		IEnumerator SetRotateTexture() 
