@@ -39,7 +39,7 @@ namespace MainMenuSettings
 		}
 		public static Font GetFont(string name)
 		{
-			Object[] fonts = Object.FindObjectsOfTypeAll(typeof(Font));
+			UnityEngine.Object[] fonts = Resources.FindObjectsOfTypeAll(typeof(Font));
 			foreach (Font font in fonts.Cast<Font>())
 			{
 				if (font.name == name) return font;

@@ -10,9 +10,9 @@ namespace MainMenuSettings
 	}
 	class SettingsHandler : MonoBehaviour
 	{
-		public Setting[] settings = {};
+		public Setting[] settings = [];
 
-		public GameObject[] selects = {};
+		public GameObject[] selects = [];
 
 		private int currentSlot;
 

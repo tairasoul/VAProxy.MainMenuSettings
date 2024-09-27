@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 
 namespace MainMenuSettings 
 {
-	[BepInPlugin("tairasoul.vaproxy.mainmenusettings", "MainMenuSettings", "1.0.1")]
+	[BepInPlugin("tairasoul.vaproxy.mainmenusettings", "MainMenuSettings", "1.0.2")]
 	class Plugin : BaseUnityPlugin 
 	{
 		internal static Sprite RotateSprite;
@@ -21,14 +21,9 @@ namespace MainMenuSettings
 		{
 			if (init) return;
 			StartCoroutine(SetRotateTexture());
-			GameObject SettingsHandler = new("MainMenuSettings");
-			DontDestroyOnLoad(SettingsHandler);
-			SettingsHandler.AddComponent<MenuSettingsHandler>();
 			SceneManager.activeSceneChanged += (Scene old, Scene _new) => 
 			{
-				if (_new.name != "Menu")
-					Ready = false;
-				else
+				if (_new.name == "Menu")
 					Setup();
 			};
 		}
@@ -47,7 +42,6 @@ namespace MainMenuSettings
 			GameObject Background = Static.Find("Background");
 			CheckmarkBackground = Background.GetComponent<Image>().sprite;
 			Checkmark = Background.Find("Checkmark").GetComponent<Image>().sprite;
-			Setup();
 		}
 		
 		void Setup() 
@@ -57,6 +51,18 @@ namespace MainMenuSettings
 			MainMenuUtils.SetupImageCompListener();
 			MainMenuUtils.SetupListener();
 			Ready = true;
+			StartCoroutine(MenuLoaded());
+		}
+		
+		IEnumerator MenuLoaded() 
+		{
+			while (true) 
+			{
+				if (Checkmark != null)
+					break;
+				yield return null;
+			}
+			MenuSettingsHandler.MenuLoaded();
 		}
 	}
 }

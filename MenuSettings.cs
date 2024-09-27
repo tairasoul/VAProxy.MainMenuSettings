@@ -37,28 +37,25 @@ namespace MainMenuSettings
 	{
 		public static void RegisterMod(string name, string id, ModOptions options) 
 		{
-			Mod mod = new();
-			mod.name = name;
-			mod.id = id;
-			mod.options = options;
+			Mod mod = new()
+			{
+				name = name,
+				id = id,
+				options = options
+			};
 			MenuSettingsHandler.AddMod(mod);
 		}
 	}
 	
-	internal class MenuSettingsHandler: MonoBehaviour
+	internal class MenuSettingsHandler
 	{
-		private static Mod[] Options = {};
+		private static Mod[] Options = [];
 		private static bool InMenu = false;
 		internal static void AddMod(Mod mod) 
 		{
-			Options = Options.Append(mod).ToArray();
+			Options = [.. Options, mod];
 			if (InMenu) 
 				HandleMod(mod);
-		}
-		
-		void Start() 
-		{
-			SceneManager.activeSceneChanged += SceneLoaded;
 		}
 		
 		static void HandleToggles(ToggleOption[] toggles, SettingsHandler handler, GameObject Content) 
@@ -66,22 +63,19 @@ namespace MainMenuSettings
 			foreach (ToggleOption toggle in toggles) 
 			{
 				GameObject tgl = MenuComponents.CreateToggle(toggle.Id, toggle.Text);
-				tgl.GetComponent<Toggle>().onValueChanged.AddListener((bool active) => 
-				{
-					toggle.Toggled.Invoke(active);
-				});
+				tgl.GetComponent<Toggle>().onValueChanged.AddListener(toggle.Toggled.Invoke);
 				tgl.GetComponent<Toggle>().isOn = toggle.defaultState;
 				tgl.Find("Background").Find("Checkmark").SetActive(toggle.defaultState);
 				tgl.GetComponent<RectTransform>().anchoredPosition = new(-211, 79);
 				tgl.SetParent(Content, false);
 				MainMenuUtils.AddRotateThing(tgl);
 				tgl.Find("select").GetComponent<RectTransform>().anchoredPosition = new(-19, 0);
-				handler.selects = handler.selects.Append(tgl.Find("select")).ToArray();
+				handler.selects = [.. handler.selects, tgl.Find("select")];
 				Setting setting = new() 
 				{
 					toggle = tgl.GetComponent<Toggle>()
 				};
-				handler.settings = handler.settings.Append(setting).ToArray();
+				handler.settings = [.. handler.settings, setting];
 			}
 		}
 		
@@ -95,12 +89,12 @@ namespace MainMenuSettings
 				btn.SetParent(Content, false);
 				MainMenuUtils.AddRotateThing(btn);
 				btn.Find("select").GetComponent<RectTransform>().anchoredPosition = new(-19, 0);
-				handler.selects = handler.selects.Append(btn.Find("select")).ToArray();
+				handler.selects = [.. handler.selects, btn.Find("select")];
 				Setting setting = new() 
 				{
 					button = btn.GetComponent<Button>()
 				};
-				handler.settings = handler.settings.Append(setting).ToArray();
+				handler.settings = [.. handler.settings, setting];
 			}
 		}
 		
@@ -128,7 +122,7 @@ namespace MainMenuSettings
 			Button button = Button.GetComponent<Button>();
 			SettingsHandler handler = Settings.GetComponent<SettingsHandler>();
 			MainMenuUtils.AddRotateThing(Button);
-			handler.selects = handler.selects.Append(Button.Find("select")).ToArray();
+			handler.selects = [.. handler.selects, Button.Find("select")];
 			Setting setting = new() 
 			{
 				button = button
@@ -138,7 +132,7 @@ namespace MainMenuSettings
 				ModPage.SetActive(true);
 				Settings.SetActive(false);
 			});
-			handler.settings = handler.settings.Append(setting).ToArray();
+			handler.settings = [.. handler.settings, setting];
 			button.GetComponent<RectTransform>().anchoredPosition = new(-211, 79);
 			Button.SetParent(Scroller, false);
 			HandleModOptions(mod.options, ModPage);
@@ -146,26 +140,13 @@ namespace MainMenuSettings
 			mod.options.CreationCallback?.Invoke(ModPage);
 		}
 		
-		void SceneLoaded(Scene old, Scene newS) 
+		internal static void MenuLoaded() 
 		{
-			if (newS.name == "Menu") 
+			InMenu = true;
+			foreach (Mod mod in Options) 
 			{
-				StartCoroutine(WaitForReady(() => 
-				{
-					InMenu = true;
-					foreach (Mod mod in Options) 
-					{
-						HandleMod(mod);
-					}
-				}));
+				HandleMod(mod);
 			}
-		}
-		
-		IEnumerator WaitForReady(Action callback) 
-		{
-			while (!Plugin.Ready)
-				yield return null;
-			callback();
 		}
 	}
 }
