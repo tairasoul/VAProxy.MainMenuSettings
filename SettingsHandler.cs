@@ -1,3 +1,4 @@
+using Rewired;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,6 +14,7 @@ namespace MainMenuSettings
 		public Setting[] settings = [];
 
 		public GameObject[] selects = [];
+		internal Player player;
 
 		private int currentSlot;
 
@@ -20,10 +22,15 @@ namespace MainMenuSettings
 		{
 			selects[0].SetActive(value: true);
 		}
+		
+		private void FixedUpdate() 
+		{
+			player = ReInput.players.GetPlayer("Player0");
+		}
 
 		private void Update()
 		{
-			if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
+			if (player.GetNegativeButtonDown("MovementY") || player.GetButtonDown("D_Down"))
 			{
 				GameObject[] array = selects;
 				for (int i = 0; i < array.Length; i++)
@@ -37,7 +44,7 @@ namespace MainMenuSettings
 				}
 				selects[currentSlot].SetActive(value: true);
 			}
-			if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
+			if (player.GetButtonDown("MovementY") || player.GetButtonDown("D_Up"))
 			{
 				GameObject[] array = selects;
 				for (int i = 0; i < array.Length; i++)
@@ -52,11 +59,11 @@ namespace MainMenuSettings
 				selects[currentSlot].SetActive(value: true);
 			}
 			MenuComponents.ScrollToElement(selects[currentSlot]);
-			if (Input.GetKeyDown(KeyCode.E))
+			if (player.GetButtonDown("Action"))
 			{
 				Setting current = settings[currentSlot];
 				if (current.toggle != null)
-					current.toggle.isOn = !current.toggle.isOn;//.onValueChanged.Invoke(!current.toggle.isOn);
+					current.toggle.isOn = !current.toggle.isOn;
 				else
 					current.button?.onClick.Invoke();
 			}

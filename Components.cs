@@ -8,7 +8,7 @@ namespace MainMenuSettings
 	public static class MenuComponents 
 	{
 		internal static void ScrollToElement(GameObject element) {
-			ScrollRect scrollRect = GameObject.Find("Canvas").Find("Settings").Find("Scroller").GetComponent<ScrollRect>();
+			ScrollRect scrollRect = GameObject.Find("Canvas").Find("ModSettings").Find("Scroller").GetComponent<ScrollRect>();
 			Vector3 targetPosition = scrollRect.viewport.InverseTransformPoint(element.GetComponent<RectTransform>().position);
 			
 			int offset = 40;
@@ -97,10 +97,7 @@ namespace MainMenuSettings
 			checkmark.AddComponent<RectTransform>().sizeDelta = new(15, 15);
 			checkmark.AddComponent<CanvasRenderer>();
 			checkmark.AddComponent<Image>().sprite = Plugin.Checkmark;
-			toggle.onValueChanged.AddListener((bool state) => 
-			{
-				checkmark.SetActive(state);
-			});
+			toggle.onValueChanged.AddListener(checkmark.SetActive);
 			return Button;
 		}
 	}

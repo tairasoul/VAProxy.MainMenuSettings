@@ -1,7 +1,3 @@
-using System;
-using System.Collections;
-using System.ComponentModel.Design.Serialization;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using MainMenuSettings.Extensions;
@@ -17,15 +13,85 @@ namespace MainMenuSettings
 		};
 		internal static void CreateText() 
 		{
-			GameObject Text = GameObject.Find("Canvas").Find("Image").Find("Text (Legacy) (5)");
-			GameObject cloned = Text.Instantiate();
-			cloned.SetParent(GameObject.Find("Canvas").Find("Image"), false);
-			cloned.GetComponent<RectTransform>().anchoredPosition = new(178.7027f, -126.6176f);
-			cloned.GetComponent<Text>().text = "G/ Settings";
+			GameObject Button = new("Mod Settings");
+			RectTransform transform = Button.AddComponent<RectTransform>();
+			GameObject startMenu = GameObject.Find("Canvas").Find("StartMenu");
+			Button.SetParent(startMenu, false);
+			transform.anchoredPosition = new(102.3593f, -93.0704f);
+			transform.sizeDelta = new(122.69f, 35);
+			transform.anchorMax = new(0, 1);
+			transform.anchorMin = new(0, 1);
+			Image ButtonBG = Button.AddComponent<Image>();
+			ButtonBG.sprite = Plugin.ButtonImage;
+			ButtonBG.pixelsPerUnitMultiplier = 0.91f;
+			ButtonBG.type = Image.Type.Sliced;
+			GameObject Text = Button.AddObject("Text");
+			RectTransform TTransform = Text.AddComponent<RectTransform>();
+			TTransform.anchoredPosition = new(28.655f, 0);
+			TTransform.sizeDelta = new(320, 60);
+			TTransform.localScale = new(0.5f, 0.5f, 0.5f);
+			Text text = Text.AddComponent<Text>();
+			text.fontSize = 55;
+			text.font = Find<Font>((v) => v.name == "Jupiter");
+			text.text = "Mods";
+			text.material = Find<Material>((v) => v.name == "wordsArtificer");
+			GameObject select = Button.AddObject("select");
+			RectTransform sTransform = select.AddComponent<RectTransform>();
+			sTransform.eulerAngles = new(50, 270, 180);
+			sTransform.anchoredPosition = new(78.2f, 0);
+			sTransform.sizeDelta = new(30, 30);
+			Image sImage = select.AddComponent<Image>();
+			sImage.sprite = Plugin.RotateSprite;
+			Rotate rotate = select.AddComponent<Rotate>();
+			select.SetActive(false);
+			rotate.speed = new(500, 0, 0);
+			ChoiceSelect cSelect = startMenu.GetComponent<ChoiceSelect>();
+			ChoiceSelect.Choices choice = new() 
+			{
+				OnHighlight = new(),
+				OnPick = new()
+			};
+			choice.OnHighlight.AddListener(() => {
+				select.SetActive(true);
+				startMenu.Find("Start").Find("select").SetActive(false);
+				startMenu.Find("Discord").Find("select").SetActive(false);
+				startMenu.Find("Twitter").Find("select").SetActive(false);
+				startMenu.Find("Exit").Find("select").SetActive(false);
+				startMenu.Find("Options").Find("select").SetActive(false);
+				startMenu.Find("Credits").Find("select").SetActive(false);
+			});
+			choice.OnPick.AddListener(() => 
+			{
+				startMenu.SetActive(false);
+				GameObject SettingsPage = GameObject.Find("Canvas").Find("ModSettings");
+				SettingsPage.SetActive(true);
+				RectTransform PT = SettingsPage.GetComponent<RectTransform>();
+				PT.rotation = new(0, -0.7071f, 0, 0.7071f);
+				PT.sizeDelta = new(-167.86f, 18.7651f);
+				PT.anchorMax = new(1, 1);
+				PT.anchorMin = new(0, 0);
+				PT.anchoredPosition = new(14.17f, 0.73f);
+			});
+			ChoiceSelect.Choices[] choices = [];
+			cSelect.Choice.First().OnHighlight.AddListener(() => 
+			{
+				select.SetActive(false);
+			});
+			choices = [ cSelect.Choice.First() ];
+			choices = [ .. choices, choice ];
+			for (int i = 1; i < cSelect.Choice.Length; i++)  
+			{
+				cSelect.Choice[i].OnHighlight.AddListener(() => 
+				{
+					select.SetActive(false);
+				});
+				choices = [ .. choices, cSelect.Choice[i]];
+			}
+			cSelect.Choice = choices;
 		}
 		static T Find<T>(Func<T, bool> predicate)
 		{
-			foreach (T find in GameObject.FindObjectsOfTypeAll(typeof(T)).Cast<T>())
+			foreach (T find in Resources.FindObjectsOfTypeAll(typeof(T)).Cast<T>())
 			{
 				if (predicate(find)) return find;
 			}
@@ -57,7 +123,7 @@ namespace MainMenuSettings
 			GameObject.Destroy(cloned.Find("DynamicAI"));
 			GameObject.Destroy(cloned.Find("Shadow"));
 			GameObject.Destroy(cloned.Find("Graphics"));*/
-			GameObject Page = new("Settings");
+			GameObject Page = new("ModSettings");
 			Page.AddComponent<RectTransform>();
 			CanvasRenderer rend = Page.AddComponent<CanvasRenderer>();
 			Page.AddComponent<Image>().color = new(0, 0, 0, 0.447f);
@@ -80,10 +146,10 @@ namespace MainMenuSettings
 			key.Event.AddListener(() => 
 			{
 				Page.SetActive(false);
-				GameObject.Find("Canvas").Find("Image").SetActive(true);
+				GameObject.Find("Canvas").Find("StartMenu").SetActive(true);
 			});
 			KeyboardTrigger trigger = Page.AddComponent<KeyboardTrigger>();
-			trigger.Choices = new KeyboardTrigger.Key[] { key };
+			trigger.Choices = [key];
 			trigger.dis = false;
 			Page.AddComponent<SettingsHandler>();
 			GameObject Text = new("EscapeText");
@@ -134,7 +200,7 @@ namespace MainMenuSettings
 				GameObject.Find("Canvas").Find("Settings").SetActive(true);
 			});
 			KeyboardTrigger trigger = Page.AddComponent<KeyboardTrigger>();
-			trigger.Choices = new KeyboardTrigger.Key[] { key };
+			trigger.Choices = [key];
 			trigger.dis = false;
 			Page.AddComponent<SettingsHandler>();
 			GameObject Text = new("EscapeText");
@@ -219,27 +285,6 @@ namespace MainMenuSettings
 			transform.sizeDelta = new(30, 30);
 			transform.localScale = new(0.5f, 0.5f, 0.5f);
 			select.SetActive(false);
-		}
-		internal static void SetupImageCompListener() 
-		{
-			KeyboardTrigger trigger = GameObject.Find("Canvas").Find("Image").GetComponent<KeyboardTrigger>();
-			trigger.Choices = trigger.Choices.Append(Keybind).ToArray();
-		}
-		internal static void SetupListener() 
-		{
-			Keybind.Event.AddListener(() => 
-			{
-				GameObject Background = GameObject.Find("Canvas").Find("Image");
-				GameObject SettingsPage = GameObject.Find("Canvas").Find("Settings");
-				Background.SetActive(false);
-				SettingsPage.SetActive(true);
-				RectTransform PT = SettingsPage.GetComponent<RectTransform>();
-				PT.rotation = new(0, -0.7071f, 0, 0.7071f);
-				PT.sizeDelta = new(-167.86f, 18.7651f);
-				PT.anchorMax = new(1, 1);
-				PT.anchorMin = new(0, 0);
-				PT.anchoredPosition = new(14.17f, 0.73f);
-			});
 		}
 	}
 }

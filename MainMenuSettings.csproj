@@ -157,6 +157,12 @@
     <Reference Include="AmplifyColor">
       <HintPath>../../../.local/share/Steam/steamapps/common/VA Proxy Demo/VA-Proxy_Data/Managed/AmplifyColor.dll</HintPath>
     </Reference>
+    <Reference Include="Rewired_Core">
+      <HintPath>../../../.local/share/Steam/steamapps/common/VA Proxy Demo/VA-Proxy_Data/Managed/Rewired_Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Rewired_Windows">
+      <HintPath>../../../.local/share/Steam/steamapps/common/VA Proxy Demo/VA-Proxy_Data/Managed/Rewired_Windows.dll</HintPath>
+    </Reference>
     <Reference Include="UnityUIExtensions.examples">
       <HintPath>../../../.local/share/Steam/steamapps/common/VA Proxy Demo/VA-Proxy_Data/Managed/UnityUIExtensions.examples.dll</HintPath>
     </Reference>

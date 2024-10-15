@@ -116,7 +116,7 @@ namespace MainMenuSettings
 			mpT.anchoredPosition = new(14.17f, 0.73f);
 			mpT.anchorMax = new(1, 1);
 			mpT.anchorMin = new(0, 0);
-			GameObject Settings = GameObject.Find("Canvas").Find("Settings");
+			GameObject Settings = GameObject.Find("Canvas").Find("ModSettings");
 			GameObject Scroller = Settings.Find("Scroller").Find("Viewport").Find("Content");
 			GameObject Button = MenuComponents.CreateButton(mod.id, mod.name);
 			Button button = Button.GetComponent<Button>();
