@@ -197,7 +197,7 @@ namespace MainMenuSettings
 			key.Event.AddListener(() => 
 			{
 				Page.SetActive(false);
-				GameObject.Find("Canvas").Find("Settings").SetActive(true);
+				GameObject.Find("Canvas").Find("ModSettings").SetActive(true);
 			});
 			KeyboardTrigger trigger = Page.AddComponent<KeyboardTrigger>();
 			trigger.Choices = [key];
