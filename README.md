@@ -27,7 +27,7 @@ ToggleOption opt = new()
     defaultState = false
 };
 opts.toggles = new ToggleOption[] { opt };
-MenuSettings.RegisterMod($"testMod", $"tairasoul.testmod}", opts);
+MenuSettings.RegisterMod($"testMod", "tairasoul.testmod", opts);
 ```
 
 This will create a mod entry with a single toggle option, logging `Toggled testOpt.TestMod to true/false` when toggled.
@@ -46,7 +46,7 @@ ButtonOption opt = new()
     }
 };
 opts.buttons = new ButtonOption[] { opt };
-MenuSettings.RegisterMod($"testMod", $"tairasoul.testmod}", opts);
+MenuSettings.RegisterMod($"testMod", "tairasoul.testmod", opts);
 ```
 
 This will create a mod with a single button option, logging `Clicked testOpt.TestMod` when interacted with.
